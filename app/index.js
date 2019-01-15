@@ -125,7 +125,7 @@ const unifiedServer=((req,res)=>{
        // This is my home
        //
        handlers.home = function(data,callback){
-           callback(202,{'name':'home handler'});
+          callback(200,{"welcome message":"Hello World!"});
        };
 
        handlers.ping = function(data,callback){
