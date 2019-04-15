@@ -1,9 +1,17 @@
 const http = require('http');
 const url = require('url');
 const StringDecoder  = require('string_decoder').StringDecoder;
-const config = require('./config');
+const config = require('./lib/config');
 const https = require('https');
 const fs = require('fs');
+const _data=require('./lib/data.js');
+
+const handlers = require('./lib/handlers');
+const helpers = require('./lib/helpers');
+
+
+
+
 
  http.createServer((req,res)=>{
 
@@ -74,7 +82,7 @@ const unifiedServer=((req,res)=>{
       'queryString' : queryString,
       'method' : method,
       'headers' : headers,
-      'payload' : buffer
+      'payload' :  helpers.parseJsonToObject(buffer)
     };
 
     chosenHandler(data,function(statusCode,payload){
@@ -86,7 +94,7 @@ const unifiedServer=((req,res)=>{
       payload = typeof(payload) == 'object'? payload : {};
 
       // Convert the payload to a string
-      var payloadString = JSON.stringify(payload);
+      let payloadString = JSON.stringify(payload);
 
       // Return the response
       res.setHeader('Content-Type','application/json')
@@ -113,38 +121,16 @@ const unifiedServer=((req,res)=>{
 
 
 
-       // Define all the handlers
-       let handlers = {};
 
-       // Sample handler
-       handlers.sample = function(data,callback){
-           callback(200,{'name':'sample handler'});
-       };
-
-
-       // This is my home
-       //
-       handlers.home = function(data,callback){
-          callback(200,{"welcome message":"Hello World!"});
-       };
-
-       handlers.ping = function(data,callback){
-           callback(200);
-       };
-
-       // Not found handler
-       handlers.notFound = function(data,callback){
-         callback(404);
-       };
-handlers.users=function(data,callback){
-  callback(200,{"welcome message":"Hello World!"});
-};
        // Define the request router
        const router = {
          // 'sample' : handlers.sample
-         'home' : handlers.home,
+
           'ping' : handlers.ping,
-           'users' : handlers.users
+           'users' : handlers.users,
+           'tokens' : handlers.tokens,
+           'checks' : handlers.checks
+
        };
 
 
